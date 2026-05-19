@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon",
     "drizzle:push": "drizzle-kit push --config src/config/drizzle.config.ts",
     "drizzle:records": "tsx src/config/initialRecords.config.ts",
     "test": "echo \"Error: no test specified\" && exit 1"

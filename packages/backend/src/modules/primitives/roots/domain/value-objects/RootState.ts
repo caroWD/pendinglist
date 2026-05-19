@@ -1,24 +1,26 @@
 import { DomainError } from '../../../errors/domain/DomainError.ts'
 
-export enum RootStateEnum {
-  ACTIVE,
-  ARCHIVED,
-}
+const Status = {
+  active: 'ACTIVE',
+  archived: 'ARCHIVED',
+} as const
+
+export type RootStateEmun = (typeof Status)[keyof typeof Status]
 
 export class RootState {
-  value: RootStateEnum
+  value: RootStateEmun
 
-  private constructor(value: RootStateEnum) {
+  private constructor(value: RootStateEmun) {
     this.value = value
   }
 
-  public static create(value: RootStateEnum): RootState {
+  public static create(value: RootStateEmun): RootState {
     if (value === null) throw new DomainError('The State cannot be null.')
 
-    if (typeof value !== 'number')
-      throw new DomainError('The State must be a number.')
+    if (typeof value !== 'string')
+      throw new DomainError('The State must be a string.')
 
-    if (!Object.values(RootStateEnum).includes(value))
+    if (value !== 'ACTIVE' && value !== 'ARCHIVED')
       throw new DomainError('The State must be a RootStateEnum.')
 
     return new RootState(value)
