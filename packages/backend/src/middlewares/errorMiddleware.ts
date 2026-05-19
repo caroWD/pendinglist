@@ -1,6 +1,7 @@
 import { DrizzleError } from 'drizzle-orm'
 import type { ErrorRequestHandler } from 'express'
 import { ZodError } from 'zod'
+import { DomainError } from '../modules/primitives/errors/domain/DomainError.ts'
 
 export const errorMiddleware: ErrorRequestHandler = (
   error,
@@ -8,7 +9,7 @@ export const errorMiddleware: ErrorRequestHandler = (
   res,
   next
 ) => {
-  if (error instanceof ZodError)
+  if (error instanceof ZodError || error instanceof DomainError)
     res.status(400).json({ message: JSON.parse(error.message), state: false })
 
   if (error instanceof DrizzleError)
