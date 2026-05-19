@@ -1,3 +1,7 @@
 import 'dotenv/config'
 
-export const { PORT = '3000' } = process.env
+export const {
+  NODE_ENV = 'development',
+  PORT = '3000',
+  DB_FILE_NAME = 'file:local.db',
+} = process.env
