@@ -1,16 +1,14 @@
-import { Button } from '@/components/ui/button'
-import { DarkModeProvider } from './contexts/DarkModeProvider'
-import { DarkModeToggle } from './components/globals/DarkModeToggle'
-import { TooltipProvider } from './components/ui/tooltip'
+import { DarkModeProvider } from '@/contexts/DarkModeProvider'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { Toaster } from '@/components/ui/sonner'
+import { Outlet } from 'react-router'
 
 function App() {
   return (
     <DarkModeProvider defaultDarkMode="dark" storageKey="dark-mode">
       <TooltipProvider>
-        <div className="flex min-h-svh flex-col items-center justify-center">
-          <Button>Click me</Button>
-          <DarkModeToggle />
-        </div>
+        <Outlet />
+        <Toaster />
       </TooltipProvider>
     </DarkModeProvider>
   )
