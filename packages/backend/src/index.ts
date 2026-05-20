@@ -7,6 +7,8 @@ import { permissionRouter } from './modules/access-controls/globals/permissions/
 import { roleRouter } from './modules/access-controls/globals/roles/infrastructure/roleRouter.ts'
 import { teamPermissionRouter } from './modules/access-controls/teams/team-permissions/infrastructure/teamPermissionRouter.ts'
 import { teamRoleRouter } from './modules/access-controls/teams/team-roles/infrastructure/teamRoleRouter.ts'
+import { teamRouter } from './modules/workspaces/teams/infrastructure/teamRouter.ts'
+import { userRouter } from './modules/auth/users/infrastructure/userRouter.ts'
 
 const app = express()
 
@@ -21,6 +23,10 @@ app.use(`${pathBase}/role`, roleRouter)
 
 app.use(`${pathBase}/team-permission`, teamPermissionRouter)
 app.use(`${pathBase}/team-role`, teamRoleRouter)
+
+app.use(`${pathBase}/team`, teamRouter)
+
+app.use(`${pathBase}/user`, userRouter)
 
 app.use(errorMiddleware)
 
