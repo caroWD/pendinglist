@@ -77,6 +77,8 @@ export class UserController {
         roleId
       )
 
+      adminRoles.push('Guest user')
+
       const role: RoleDto =
         await serviceContainer.accessControl.global.role.findOne(roleId)
       if (!adminRoles.includes(role.name)) {
