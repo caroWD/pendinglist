@@ -10,9 +10,6 @@ export const handleSchema = string({
     error:
       'El nombre de usuario no debe tener más de 30 caracteres de longitud.',
   })
-  .refine((handle) => handle.at(0) === '@', {
-    error: 'El nombre de usuario debe iniciar con un "@"',
-  })
 
 export const firstNameSchema = string({
   error: 'El nombre debe ser una cadena de caracteres.',

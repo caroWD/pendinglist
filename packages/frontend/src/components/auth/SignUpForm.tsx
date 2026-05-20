@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import type { ComponentProps } from 'react'
+import { useState, type ComponentProps } from 'react'
 import {
   Card,
   CardContent,
@@ -30,6 +30,13 @@ import {
   lastNameSchema,
   passwordSchema,
 } from '@/lib/zodUtils'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from '../ui/input-group'
+import { IconEye, IconEyeOff } from '@tabler/icons-react'
 
 const singUpFormSchema = z
   .object({
@@ -53,6 +60,8 @@ type MessageReponse = {
 }
 
 export const SignUpForm = ({ className, ...props }: ComponentProps<'div'>) => {
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+
   const signUpForm = useForm<SignUpRequest>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(singUpFormSchema as any),
@@ -73,7 +82,7 @@ export const SignUpForm = ({ className, ...props }: ComponentProps<'div'>) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: UUIDv7(),
-          handle: data.handle,
+          handle: `@${data.handle}`,
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
@@ -126,13 +135,18 @@ export const SignUpForm = ({ className, ...props }: ComponentProps<'div'>) => {
                     <FieldLabel htmlFor="form-signup-handle">
                       Nombre de usuario
                     </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-signup-handle"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="@john.wick"
-                      autoComplete="off"
-                    />
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <InputGroupText>@</InputGroupText>
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        {...field}
+                        id="form-signup-handle"
+                        aria-invalid={fieldState.invalid}
+                        placeholder="john.wick"
+                        autoComplete="off"
+                      />
+                    </InputGroup>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -196,6 +210,10 @@ export const SignUpForm = ({ className, ...props }: ComponentProps<'div'>) => {
                       placeholder="ejemplo@dominio.com"
                       autoComplete="off"
                     />
+                    <FieldDescription>
+                      Usaremos esta dirección para ponernos en contacto contigo.
+                      No compartiremos tu correo electrónico con nadie más.
+                    </FieldDescription>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -210,13 +228,26 @@ export const SignUpForm = ({ className, ...props }: ComponentProps<'div'>) => {
                     <FieldLabel htmlFor="form-signup-password">
                       Contraseña
                     </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-signup-password"
-                      type="password"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="off"
-                    />
+                    <InputGroup>
+                      <InputGroupInput
+                        className="items-center"
+                        {...field}
+                        id="form-signup-password"
+                        type={!showPassword ? 'password' : 'text'}
+                        aria-invalid={fieldState.invalid}
+                        autoComplete="off"
+                      />
+                      <InputGroupAddon
+                        align="inline-end"
+                        className="cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {!showPassword ? <IconEyeOff /> : <IconEye />}
+                      </InputGroupAddon>
+                    </InputGroup>
+                    <FieldDescription>
+                      Debe tener al menos 8 caracteres.
+                    </FieldDescription>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -231,13 +262,24 @@ export const SignUpForm = ({ className, ...props }: ComponentProps<'div'>) => {
                     <FieldLabel htmlFor="form-signup-confirm">
                       Confirmar contraseña
                     </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-signup-confirm"
-                      type="password"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="off"
-                    />
+                    <InputGroup>
+                      <InputGroupInput
+                        className="items-center"
+                        {...field}
+                        id="form-signup-confirm"
+                        type={!showPassword ? 'password' : 'text'}
+                        aria-invalid={fieldState.invalid}
+                        autoComplete="off"
+                      />
+                      <InputGroupAddon
+                        align="inline-end"
+                        className="cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {!showPassword ? <IconEyeOff /> : <IconEye />}
+                      </InputGroupAddon>
+                    </InputGroup>
+                    <FieldDescription>Confirma tu contraseña.</FieldDescription>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

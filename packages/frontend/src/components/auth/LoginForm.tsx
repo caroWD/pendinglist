@@ -3,7 +3,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import type { ComponentProps } from 'react'
+import { useState, type ComponentProps } from 'react'
 import {
   Card,
   CardContent,
@@ -19,10 +19,16 @@ import {
   FieldGroup,
   FieldLabel,
 } from '../ui/field'
-import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { NavLink } from 'react-router'
 import { handleSchema, passwordSchema } from '@/lib/zodUtils'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from '../ui/input-group'
+import { IconEyeOff, IconEye } from '@tabler/icons-react'
 
 const loginFormSchema = object({
   handle: handleSchema,
@@ -37,6 +43,8 @@ type MessageReponse = {
 }
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+
   const loginForm = useForm<LoginRequest>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(loginFormSchema as any),
@@ -51,7 +59,10 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
       const response = await fetch('http://localhost:8765/api/v1/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          handle: `@${data.handle}`,
+          password: data.password,
+        }),
       })
 
       if (!response.ok) {
@@ -100,13 +111,18 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
                     <FieldLabel htmlFor="form-login-handle">
                       Nombre de usuario
                     </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-login-handle"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="@john.wick"
-                      autoComplete="off"
-                    />
+                    <InputGroup>
+                      <InputGroupAddon>
+                        <InputGroupText>@</InputGroupText>
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        {...field}
+                        id="form-login-handle"
+                        aria-invalid={fieldState.invalid}
+                        placeholder="john.wick"
+                        autoComplete="off"
+                      />
+                    </InputGroup>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -129,13 +145,23 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
                         ¿Has olvidado tu contraseña?
                       </NavLink>
                     </div>
-                    <Input
-                      {...field}
-                      id="form-login-password"
-                      type="password"
-                      aria-invalid={fieldState.invalid}
-                      autoComplete="off"
-                    />
+                    <InputGroup>
+                      <InputGroupInput
+                        className="items-center"
+                        {...field}
+                        id="form-login-password"
+                        type={!showPassword ? 'password' : 'text'}
+                        aria-invalid={fieldState.invalid}
+                        autoComplete="off"
+                      />
+                      <InputGroupAddon
+                        align="inline-end"
+                        className="cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {!showPassword ? <IconEyeOff /> : <IconEye />}
+                      </InputGroupAddon>
+                    </InputGroup>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
