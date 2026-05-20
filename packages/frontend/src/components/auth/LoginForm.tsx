@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import z, { object } from 'zod'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -22,47 +22,14 @@ import {
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { NavLink } from 'react-router'
+import { handleSchema, passwordSchema } from '@/lib/zodUtils'
 
-const loginFormSchema = z.object({
-  handle: z
-    .string({
-      error: 'El nombre de usuario debe ser una cadena de caracteres.',
-    })
-    .min(5, {
-      error: 'El nombre de usuario debe tener mínimo 5 caracteres de longitud.',
-    })
-    .max(30, {
-      error:
-        'El nombre de usuario no puede tener más de 30 caracteres de longitud.',
-    })
-    .refine((handle) => handle.at(0) === '@', {
-      error: 'El nombre de usuario debe iniciar con un "@"',
-    }),
-  password: z
-    .string({ error: 'La contraseña debe ser una cadena de caracteres.' })
-    .refine((password) => !/\s+/g.test(password), {
-      error: 'La contraseña no puede tener espacios en blanco.',
-    })
-    .regex(/^(?=.*[a-z]).+$/, {
-      error: 'La contraseña debe contener al menos una letra minúscula.',
-    })
-    .regex(/^(?=.*[A-Z]).+$/, {
-      error: 'La contraseña debe contener al menos una letra mayúscula.',
-    })
-    .regex(/^(?=.*[0-9]).+$/, {
-      error: 'La contraseña debe contener al menos un número.',
-    })
-    .regex(/^(?=.*\d)(?=.*[$@$!%*?&/])([A-Za-z\d$@$!%*?&/]|[^ ]).+$/, {
-      error:
-        'La contraseña debe contener al menos uno de los siguientes caracteres especiales: "$@$!%*?&/".',
-    })
-    .regex(/^.{8,20}$/, {
-      error:
-        'La contraseña debe tener una longitud mínima de 8 caracteres y máxima de 20.',
-    }),
+const loginFormSchema = object({
+  handle: handleSchema,
+  password: passwordSchema,
 })
 
-type LoginFormRequest = z.infer<typeof loginFormSchema>
+type LoginRequest = z.infer<typeof loginFormSchema>
 
 type MessageReponse = {
   message: string
@@ -70,7 +37,7 @@ type MessageReponse = {
 }
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
-  const loginForm = useForm<LoginFormRequest>({
+  const loginForm = useForm<LoginRequest>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(loginFormSchema as any),
     defaultValues: {
@@ -79,7 +46,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
     },
   })
 
-  const onSubmit = (data: LoginFormRequest) => {
+  const onSubmit = (data: LoginRequest) => {
     const fetchLogin = async () => {
       const response = await fetch('http://localhost:8765/api/v1/user/login', {
         method: 'POST',
@@ -185,7 +152,11 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
             </Button>
             <FieldDescription className="text-center">
               ¿No tienes una cuenta?{' '}
-              <NavLink to="#" className="hover:text-indigo-400!">
+              <NavLink
+                to="/auth/register"
+                viewTransition
+                className="hover:text-indigo-400!"
+              >
                 Regístrate
               </NavLink>
             </FieldDescription>
