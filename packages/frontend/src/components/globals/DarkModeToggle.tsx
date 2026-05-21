@@ -1,5 +1,5 @@
 import { IconSun, IconMoon } from '@tabler/icons-react'
-import { useDarkMode } from '@/contexts/useDarkMode'
+import { useDarkMode } from '@/contexts/dark-mode/useDarkMode'
 import {
   DropdownMenu,
   DropdownMenuContent,

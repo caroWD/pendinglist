@@ -29,7 +29,9 @@ import {
   InputGroupText,
 } from '../ui/input-group'
 import { IconEyeOff, IconEye } from '@tabler/icons-react'
-import { fetchData, type MessageReponse } from '@/lib/fetchUtils'
+import { fetchData } from '@/lib/fetchUtils'
+import { useUserData } from '@/contexts/user-data/useUserData'
+import type { UserData } from '@/contexts/user-data/UserDataProviderContext'
 
 const loginFormSchema = object({
   handle: handleSchema,
@@ -42,6 +44,8 @@ const url: string = 'http://localhost:8765/api/v1/user/login'
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
+
+  const { setUserData } = useUserData()
 
   const navigate = useNavigate()
 
@@ -57,7 +61,7 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
   const onSubmit = async (data: LoginRequest) => {
     toast.promise(
       () =>
-        fetchData<MessageReponse, LoginRequest>(url, {
+        fetchData<UserData, LoginRequest>(url, {
           method: 'POST',
           request: {
             handle: `@${data.handle}`,
@@ -67,7 +71,9 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
       {
         loading: 'Cargando...',
         success: (response) => {
-          if (!response.state) throw new Error('Usuario no autorizado')
+          if (!response) throw new Error('Usuario no autorizado')
+
+          setUserData(response)
 
           navigate('/', { viewTransition: true })
 
