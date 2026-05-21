@@ -102,3 +102,9 @@ export const authUserRequestSchema = userSelectSchema.pick({
 })
 
 export type AuthUserRequest = z.infer<typeof authUserRequestSchema>
+
+export type AuthUserResponse = {
+  message: string
+  state: boolean
+  token: string | null
+}

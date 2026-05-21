@@ -9,6 +9,7 @@ import {
   userIdRequestSchema,
   type AddUserRequest,
   type AuthUserRequest,
+  type AuthUserResponse,
   type EditPasswordUserRequest,
   type EditUserRequest,
   type UserIdRequest,
@@ -128,7 +129,7 @@ export class UserController {
 
   async auth(
     req: Request<AuthUserRequest>,
-    res: Response<UserDto | BaseResponse>,
+    res: Response<AuthUserResponse>,
     next: NextFunction
   ): Promise<void> {
     try {
@@ -141,7 +142,7 @@ export class UserController {
         password
       )
 
-      const jwt = await new SignJWT({
+      const token = await new SignJWT({
         [JWT_CLAIM]: true,
         id: user.id,
         handle: user.handle,
@@ -158,20 +159,20 @@ export class UserController {
         .setExpirationTime('1h')
         .sign(new TextEncoder().encode(JWT_SECRET))
 
-      const userDto: UserDto = await serviceContainer.auth.user.findOne(user.id)
-
       res
         .status(200)
-        .cookie('access-token', jwt, {
+        .cookie('access-token', token, {
           httpOnly: true,
           secure: NODE_ENV === 'production',
           sameSite: 'strict',
           maxAge: 1000 * 60 * 60,
         })
-        .json(userDto)
+        .json({ message: 'Authorized user!', state: true, token })
     } catch (error) {
       if (error instanceof UnauthorizedUserError)
-        res.status(401).json({ message: error.message, state: false })
+        res
+          .status(401)
+          .json({ message: error.message, state: false, token: null })
 
       next(error)
     }
