@@ -128,7 +128,7 @@ export class UserController {
 
   async auth(
     req: Request<AuthUserRequest>,
-    res: Response<BaseResponse>,
+    res: Response<UserDto | BaseResponse>,
     next: NextFunction
   ): Promise<void> {
     try {
@@ -158,6 +158,8 @@ export class UserController {
         .setExpirationTime('1h')
         .sign(new TextEncoder().encode(JWT_SECRET))
 
+      const userDto: UserDto = await serviceContainer.auth.user.findOne(user.id)
+
       res
         .status(200)
         .cookie('access-token', jwt, {
@@ -166,7 +168,7 @@ export class UserController {
           sameSite: 'strict',
           maxAge: 1000 * 60 * 60,
         })
-        .json({ message: 'Authorized user!', state: true })
+        .json(userDto)
     } catch (error) {
       if (error instanceof UnauthorizedUserError)
         res.status(401).json({ message: error.message, state: false })
