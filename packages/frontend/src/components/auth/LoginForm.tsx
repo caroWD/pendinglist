@@ -20,7 +20,7 @@ import {
   FieldLabel,
 } from '../ui/field'
 import { Button } from '../ui/button'
-import { NavLink } from 'react-router'
+import { NavLink, useNavigate } from 'react-router'
 import { handleSchema, passwordSchema } from '@/lib/zodUtils'
 import {
   InputGroup,
@@ -29,6 +29,7 @@ import {
   InputGroupText,
 } from '../ui/input-group'
 import { IconEyeOff, IconEye } from '@tabler/icons-react'
+import { fetchData, type MessageReponse } from '@/lib/fetchUtils'
 
 const loginFormSchema = object({
   handle: handleSchema,
@@ -37,13 +38,12 @@ const loginFormSchema = object({
 
 type LoginRequest = z.infer<typeof loginFormSchema>
 
-type MessageReponse = {
-  message: string
-  state: boolean
-}
+const url: string = 'http://localhost:8765/api/v1/user/login'
 
 export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
+
+  const navigate = useNavigate()
 
   const loginForm = useForm<LoginRequest>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,38 +54,32 @@ export const LoginForm = ({ className, ...props }: ComponentProps<'div'>) => {
     },
   })
 
-  const onSubmit = (data: LoginRequest) => {
-    const fetchLogin = async () => {
-      const response = await fetch('http://localhost:8765/api/v1/user/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          handle: `@${data.handle}`,
-          password: data.password,
+  const onSubmit = async (data: LoginRequest) => {
+    toast.promise(
+      () =>
+        fetchData<MessageReponse, LoginRequest>(url, {
+          method: 'POST',
+          request: {
+            handle: `@${data.handle}`,
+            password: data.password,
+          },
         }),
-      })
+      {
+        loading: 'Cargando...',
+        success: (response) => {
+          if (!response.state) throw new Error('Usuario no autorizado')
 
-      if (!response.ok) {
-        toast.error('Error al iniciar sesión')
+          navigate('/', { viewTransition: true })
 
-        return
+          return 'Usuario autorizado'
+        },
+        error: (error) => {
+          if (error instanceof Error) return error.message
+
+          return error
+        },
       }
-
-      const responseData: MessageReponse =
-        (await response.json()) as MessageReponse
-
-      if (!responseData.state) {
-        toast.error(responseData.message)
-
-        return
-      }
-
-      toast.success(responseData.message)
-
-      loginForm.reset()
-    }
-
-    fetchLogin()
+    )
   }
 
   return (

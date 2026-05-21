@@ -22,7 +22,7 @@ import {
 } from '../ui/field'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { NavLink } from 'react-router'
+import { NavLink, useNavigate } from 'react-router'
 import {
   emailSchema,
   firstNameSchema,
@@ -37,6 +37,7 @@ import {
   InputGroupText,
 } from '../ui/input-group'
 import { IconEye, IconEyeOff } from '@tabler/icons-react'
+import { fetchData, type MessageReponse } from '@/lib/fetchUtils'
 
 const singUpFormSchema = z
   .object({
@@ -52,17 +53,27 @@ const singUpFormSchema = z
     path: ['confirm'],
   })
 
-type SignUpRequest = z.infer<typeof singUpFormSchema>
+type SignUpResolver = z.infer<typeof singUpFormSchema>
 
-type MessageReponse = {
-  message: string
-  state: boolean
+type SignUpRequest = {
+  id: string
+  handle: string
+  firstName: string
+  lastName: string
+  email: string
+  password: string
+  avatar: string | null
+  roleId: string
 }
+
+const url: string = 'http://localhost:8765/api/v1/user'
 
 export const SignUpForm = ({ className, ...props }: ComponentProps<'div'>) => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
 
-  const signUpForm = useForm<SignUpRequest>({
+  const navigate = useNavigate()
+
+  const signUpForm = useForm<SignUpResolver>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(singUpFormSchema as any),
     defaultValues: {
@@ -75,44 +86,38 @@ export const SignUpForm = ({ className, ...props }: ComponentProps<'div'>) => {
     },
   })
 
-  const onSubmit = (data: SignUpRequest) => {
-    const fetchLogin = async () => {
-      const response = await fetch('http://localhost:8765/api/v1/user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: UUIDv7(),
-          handle: `@${data.handle}`,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.email,
-          password: data.password,
-          avatar: null,
-          roleId: '019e41c6-deae-7af1-9511-f29da7a3d5d1',
+  const onSubmit = (data: SignUpResolver) => {
+    toast.promise(
+      () =>
+        fetchData<MessageReponse, SignUpRequest>(url, {
+          method: 'POST',
+          request: {
+            id: UUIDv7(),
+            handle: `@${data.handle}`,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            password: data.password,
+            avatar: null,
+            roleId: '019e41c6-deae-7af1-9511-f29da7a3d5d1',
+          },
         }),
-      })
+      {
+        loading: 'Cargando...',
+        success: async (response) => {
+          if (!response.state) throw new Error('Algo salio mal')
 
-      if (!response.ok) {
-        toast.error('Error al crear el usuario.')
+          navigate('/auth/welcome', { viewTransition: true })
 
-        return
+          return response.message
+        },
+        error: (error) => {
+          if (error instanceof Error) return error.message
+
+          return error
+        },
       }
-
-      const responseData: MessageReponse =
-        (await response.json()) as MessageReponse
-
-      if (!responseData.state) {
-        toast.error(responseData.message)
-
-        return
-      }
-
-      toast.success(responseData.message)
-
-      signUpForm.reset()
-    }
-
-    fetchLogin()
+    )
   }
 
   return (
