@@ -8,10 +8,11 @@
   ],
   "scripts": {
     "dev": "pnpm run --filter '**' dev",
+    "backend:local-db": "pnpm run --filter 'backend' drizzle:push && pnpm run --filter 'backend' drizzle:records",
     "commit": "sui-mono commit",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",

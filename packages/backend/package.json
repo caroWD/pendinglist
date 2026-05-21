@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon",
+    "drizzle:push": "drizzle-kit push --config src/config/drizzle.config.ts",
+    "drizzle:records": "tsx src/config/initialRecords.config.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,17 +15,25 @@
   "license": "ISC",
   "packageManager": "pnpm@10.33.4",
   "dependencies": {
+    "@libsql/client": "^0.17.3",
+    "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
+    "jose": "^6.2.3",
+    "temporal-polyfill": "^0.3.2",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.9.0",
+    "drizzle-kit": "^0.31.10",
     "nodemon": "^3.1.14",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "tsx": "^4.22.3"
   }
 }

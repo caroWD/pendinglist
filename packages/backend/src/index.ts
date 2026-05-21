@@ -1,15 +1,34 @@
 import express from 'express'
-import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { PORT } from './config/config.ts'
+import { corsMiddleware } from './middlewares/corsMiddleware.ts'
+import { errorMiddleware } from './middlewares/errorMiddleware.ts'
+import { permissionRouter } from './modules/access-controls/globals/permissions/infrastructure/permissionRouter.ts'
+import { roleRouter } from './modules/access-controls/globals/roles/infrastructure/roleRouter.ts'
+import { teamPermissionRouter } from './modules/access-controls/teams/team-permissions/infrastructure/teamPermissionRouter.ts'
+import { teamRoleRouter } from './modules/access-controls/teams/team-roles/infrastructure/teamRoleRouter.ts'
+import { teamRouter } from './modules/workspaces/teams/infrastructure/teamRouter.ts'
+import { userRouter } from './modules/auth/users/infrastructure/userRouter.ts'
 
 const app = express()
 
 app.use(express.json())
-app.use(cors())
+app.use(corsMiddleware())
 app.use(cookieParser())
 
-app.get('/', (_req, res) => res.send('Hello World!'))
+const pathBase: string = '/api/v1'
+
+app.use(`${pathBase}/permission`, permissionRouter)
+app.use(`${pathBase}/role`, roleRouter)
+
+app.use(`${pathBase}/team-permission`, teamPermissionRouter)
+app.use(`${pathBase}/team-role`, teamRoleRouter)
+
+app.use(`${pathBase}/team`, teamRouter)
+
+app.use(`${pathBase}/user`, userRouter)
+
+app.use(errorMiddleware)
 
 app.listen(PORT, () =>
   console.log(`Server listening at http://localhost:${PORT}`)
