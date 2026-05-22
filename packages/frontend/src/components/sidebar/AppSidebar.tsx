@@ -11,23 +11,20 @@ import {
   IconHome,
   IconInbox,
   IconSearch,
-  IconSparkle,
   IconLifebuoy,
   IconSend,
 } from '@tabler/icons-react'
-import { NavUserSidebar, type NavUserItem } from './NavUserSidebar'
-import { NavBoardsSidebar, type NavBoardItem } from './NavBoardsSidebar'
-import { NavTeamsSidebar, type NavTeamItem } from './NavTeamsSidebar'
+import { NavUserSidebar } from './NavUserSidebar'
+import { NavBoardsSidebar } from './NavBoardsSidebar'
+import { NavTeamsSidebar } from './NavTeamsSidebar'
 import {
   NavSecondarySidebar,
   type NavSecondaryItem,
 } from './NavSecondarySidebar'
+import { useUserData } from '@/contexts/user-data/useUserData'
 
 type AppSidebarData = {
   navMain: NavMainSidebarItem[]
-  user: NavUserItem
-  boards: NavBoardItem[]
-  teams: NavTeamItem[]
   navSecondary: NavSecondaryItem[]
 }
 
@@ -35,222 +32,34 @@ const data: AppSidebarData = {
   navMain: [
     {
       key: 1,
-      title: 'Search',
+      title: 'Buscar',
       url: '#',
       icon: IconSearch,
     },
     {
       key: 2,
-      title: 'Ask AI',
-      url: '#',
-      icon: IconSparkle,
-    },
-    {
-      key: 3,
-      title: 'Home',
+      title: 'Inicio',
       url: '#',
       icon: IconHome,
       isActive: true,
     },
     {
-      key: 4,
-      title: 'Inbox',
+      key: 3,
+      title: 'Bandeja de entrada',
       url: '#',
       icon: IconInbox,
       badge: '10',
     },
   ],
-  user: {
-    name: 'shadcn',
-    email: 'm@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  boards: [
-    {
-      name: 'Project Management & Task Tracking',
-      url: '#',
-      emoji: '📊',
-    },
-    {
-      name: 'Family Recipe Collection & Meal Planning',
-      url: '#',
-      emoji: '🍳',
-    },
-    {
-      name: 'Fitness Tracker & Workout Routines',
-      url: '#',
-      emoji: '💪',
-    },
-    {
-      name: 'Book Notes & Reading List',
-      url: '#',
-      emoji: '📚',
-    },
-    {
-      name: 'Sustainable Gardening Tips & Plant Care',
-      url: '#',
-      emoji: '🌱',
-    },
-    {
-      name: 'Language Learning Progress & Resources',
-      url: '#',
-      emoji: '🗣️',
-    },
-    {
-      name: 'Home Renovation Ideas & Budget Tracker',
-      url: '#',
-      emoji: '🏠',
-    },
-    {
-      name: 'Personal Finance & Investment Portfolio',
-      url: '#',
-      emoji: '💰',
-    },
-    {
-      name: 'Movie & TV Show Watchlist with Reviews',
-      url: '#',
-      emoji: '🎬',
-    },
-    {
-      name: 'Daily Habit Tracker & Goal Setting',
-      url: '#',
-      emoji: '✅',
-    },
-  ],
-  teams: [
-    {
-      key: 1,
-      name: 'Personal Life Management',
-      emoji: '🏠',
-      pages: [
-        {
-          key: 1,
-          name: 'Daily Journal & Reflection',
-          url: '#',
-          emoji: '📔',
-        },
-        {
-          key: 2,
-          name: 'Health & Wellness Tracker',
-          url: '#',
-          emoji: '🍏',
-        },
-        {
-          key: 3,
-          name: 'Personal Growth & Learning Goals',
-          url: '#',
-          emoji: '🌟',
-        },
-      ],
-    },
-    {
-      key: 2,
-      name: 'Professional Development',
-      emoji: '💼',
-      pages: [
-        {
-          key: 1,
-          name: 'Career Objectives & Milestones',
-          url: '#',
-          emoji: '🎯',
-        },
-        {
-          key: 2,
-          name: 'Skill Acquisition & Training Log',
-          url: '#',
-          emoji: '🧠',
-        },
-        {
-          key: 3,
-          name: 'Networking Contacts & Events',
-          url: '#',
-          emoji: '🤝',
-        },
-      ],
-    },
-    {
-      key: 3,
-      name: 'Creative Projects',
-      emoji: '🎨',
-      pages: [
-        {
-          key: 1,
-          name: 'Writing Ideas & Story Outlines',
-          url: '#',
-          emoji: '✍️',
-        },
-        {
-          key: 2,
-          name: 'Art & Design Portfolio',
-          url: '#',
-          emoji: '🖼️',
-        },
-        {
-          key: 3,
-          name: 'Music Composition & Practice Log',
-          url: '#',
-          emoji: '🎵',
-        },
-      ],
-    },
-    {
-      key: 4,
-      name: 'Home Management',
-      emoji: '🏡',
-      pages: [
-        {
-          key: 1,
-          name: 'Household Budget & Expense Tracking',
-          url: '#',
-          emoji: '💰',
-        },
-        {
-          key: 2,
-          name: 'Home Maintenance Schedule & Tasks',
-          url: '#',
-          emoji: '🔧',
-        },
-        {
-          key: 3,
-          name: 'Family Calendar & Event Planning',
-          url: '#',
-          emoji: '📅',
-        },
-      ],
-    },
-    {
-      key: 5,
-      name: 'Travel & Adventure',
-      emoji: '🧳',
-      pages: [
-        {
-          key: 1,
-          name: 'Trip Planning & Itineraries',
-          url: '#',
-          emoji: '🗺️',
-        },
-        {
-          key: 2,
-          name: 'Travel Bucket List & Inspiration',
-          url: '#',
-          emoji: '🌎',
-        },
-        {
-          key: 3,
-          name: 'Travel Journal & Photo Gallery',
-          url: '#',
-          emoji: '📸',
-        },
-      ],
-    },
-  ],
   navSecondary: [
     {
+      key: 1,
       title: 'Support',
       url: '#',
       icon: IconLifebuoy,
     },
     {
+      key: 2,
       title: 'Feedback',
       url: '#',
       icon: IconSend,
@@ -259,6 +68,10 @@ const data: AppSidebarData = {
 }
 
 export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
+  const {
+    userData: { userData },
+  } = useUserData()
+
   return (
     <Sidebar collapsible="icon" className="border-r-0" {...props}>
       <SidebarHeader>
@@ -266,15 +79,15 @@ export const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
         <NavMainSidebar navMain={data.navMain} />
       </SidebarHeader>
       <SidebarContent>
-        <NavBoardsSidebar boards={data.boards} />
-        <NavTeamsSidebar teams={data.teams} />
+        <NavBoardsSidebar userId={!userData ? 'null' : userData.id} />
+        <NavTeamsSidebar userId={!userData ? 'null' : userData.id} />
         <NavSecondarySidebar
           navSecondary={data.navSecondary}
           className="mt-auto"
         />
       </SidebarContent>
       <SidebarFooter>
-        <NavUserSidebar user={data.user} />
+        <NavUserSidebar />
       </SidebarFooter>
     </Sidebar>
   )

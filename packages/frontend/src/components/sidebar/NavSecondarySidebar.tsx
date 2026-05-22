@@ -9,6 +9,7 @@ import {
 } from '../ui/sidebar'
 
 export type NavSecondaryItem = {
+  key: number
   title: string
   url: string
   icon: Icon
@@ -28,7 +29,7 @@ export const NavSecondarySidebar = ({
       <SidebarGroupContent>
         <SidebarMenu>
           {navSecondary.map((item) => (
-            <SidebarMenuItem key={item.title}>
+            <SidebarMenuItem key={item.key}>
               <SidebarMenuButton asChild size="sm">
                 <a href={item.url}>
                   <item.icon />

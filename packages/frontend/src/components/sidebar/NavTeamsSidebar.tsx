@@ -7,9 +7,6 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from '../ui/sidebar'
 import { EmptyWorkspaceSidebar } from './EmptyWorkspaceSidebar'
 import {
@@ -18,6 +15,16 @@ import {
   CollapsibleTrigger,
 } from '../ui/collapsible'
 import { IconChevronRight, IconPlus } from '@tabler/icons-react'
+import { useFetch } from '@/hooks/use-fetch'
+
+type Team = {
+  id: string
+  name: string
+  description: string
+  archived: boolean
+  createdAt: string
+  updatedAt: string
+}
 
 type NavTeamPage = {
   key: number
@@ -34,24 +41,27 @@ export type NavTeamItem = {
 }
 
 interface NavTeamsSidebarProps {
-  teams: NavTeamItem[]
+  userId: string
 }
 
-export const NavTeamsSidebar = ({ teams }: NavTeamsSidebarProps) => {
+export const NavTeamsSidebar = ({ userId }: NavTeamsSidebarProps) => {
+  const { result } = useFetch<Team[]>(
+    `${import.meta.env.VITE_API_URL_BASE}/${userId}`
+  )
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Equipos</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          {!teams.length ? (
+          {!result || !result.length ? (
             <EmptyWorkspaceSidebar option="equipo" />
           ) : (
-            teams.map((team) => (
-              <Collapsible key={team.key}>
+            result.map((team) => (
+              <Collapsible key={team.id}>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
                     <a href="#">
-                      <span>{team.emoji}</span>
                       <span>{team.name}</span>
                     </a>
                   </SidebarMenuButton>
@@ -67,7 +77,7 @@ export const NavTeamsSidebar = ({ teams }: NavTeamsSidebarProps) => {
                     <IconPlus />
                   </SidebarMenuAction>
                   <CollapsibleContent>
-                    <SidebarMenuSub>
+                    {/*<SidebarMenuSub>
                       {team.pages.map((page) => (
                         <SidebarMenuSubItem key={page.key}>
                           <SidebarMenuSubButton asChild>
@@ -78,7 +88,7 @@ export const NavTeamsSidebar = ({ teams }: NavTeamsSidebarProps) => {
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       ))}
-                    </SidebarMenuSub>
+                    </SidebarMenuSub>*/}
                   </CollapsibleContent>
                 </SidebarMenuItem>
               </Collapsible>
