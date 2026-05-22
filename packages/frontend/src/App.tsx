@@ -8,7 +8,11 @@ import { router } from './routers/router'
 function App() {
   return (
     <DarkModeProvider defaultDarkMode="dark" storageKey="dark-mode">
-      <UserDataProvider defaultUserData={null}>
+      <UserDataProvider
+        defaultToken={null}
+        defaultUserData={null}
+        storageKey="user-data"
+      >
         <TooltipProvider>
           <RouterProvider router={router} />
           <Toaster />

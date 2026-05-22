@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-export type UserDto = {
+export type User = {
   id: string
   handle: string
   firstName: string
@@ -15,16 +15,34 @@ export type UserDto = {
   updatedAt: string
 }
 
-export type UserData = UserDto | null
+export type UserData = User | null
+
+export type Token = string | null
+
+type TokenState = {
+  token: Token
+  setToken: (token: Token) => void
+}
+
+type UserDataState = {
+  userData: UserData
+  setUserData: (user: UserData) => void
+}
 
 export type UserDataProviderState = {
-  userData: UserData
-  setUserData: (userData: UserData) => void
+  token: TokenState
+  userData: UserDataState
 }
 
 const initialState: UserDataProviderState = {
-  userData: null,
-  setUserData: () => null,
+  token: {
+    token: null,
+    setToken: () => null,
+  },
+  userData: {
+    userData: null,
+    setUserData: () => null,
+  },
 }
 
 export const UserDataProviderContext =

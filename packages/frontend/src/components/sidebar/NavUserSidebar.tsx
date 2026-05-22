@@ -1,3 +1,4 @@
+import { useUserData } from '@/contexts/user-data/useUserData'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import {
   DropdownMenu,
@@ -35,6 +36,13 @@ interface NavUserSidebarProps {
 
 export const NavUserSidebar = ({ user }: NavUserSidebarProps) => {
   const { isMobile } = useSidebar()
+  const {
+    userData: { userData },
+  } = useUserData()
+
+  const {
+    userData: { setUserData },
+  } = useUserData()
 
   return (
     <SidebarMenu>
@@ -46,12 +54,25 @@ export const NavUserSidebar = ({ user }: NavUserSidebarProps) => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage
+                  src={
+                    !userData
+                      ? undefined
+                      : !userData.avatar
+                        ? undefined
+                        : userData.avatar
+                  }
+                  alt={!userData ? undefined : `Avatar by ${userData.handle}`}
+                />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-medium">
+                  {!userData ? '@example' : userData.handle}
+                </span>
+                <span className="truncate text-xs">
+                  {!userData ? 'm@example.com' : userData.emial}
+                </span>
               </div>
               <IconSelector className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -69,8 +90,12 @@ export const NavUserSidebar = ({ user }: NavUserSidebarProps) => {
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">
+                    {!userData ? '@example' : userData.handle}
+                  </span>
+                  <span className="truncate text-xs">
+                    {!userData ? 'm@example.com' : userData.emial}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -93,13 +118,13 @@ export const NavUserSidebar = ({ user }: NavUserSidebarProps) => {
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <IconBell />
-                Notifications
+                Notificaciones
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setUserData(null)}>
               <IconLogout />
-              Log out
+              Cerrar sesión
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
