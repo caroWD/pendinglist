@@ -1,3 +1,4 @@
+import { useFetch } from '@/hooks/use-fetch'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +24,15 @@ import {
   IconTrash,
 } from '@tabler/icons-react'
 
+type Board = {
+  id: string
+  name: string
+  description: string
+  archived: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 export type NavBoardItem = {
   name: string
   url: string
@@ -30,24 +40,27 @@ export type NavBoardItem = {
 }
 
 interface NavBoardsSidebarProps {
-  boards: NavBoardItem[]
+  userId: string
 }
 
-export const NavBoardsSidebar = ({ boards }: NavBoardsSidebarProps) => {
+export const NavBoardsSidebar = ({ userId }: NavBoardsSidebarProps) => {
   const { isMobile } = useSidebar()
+
+  const { result } = useFetch<Board[]>(
+    `${import.meta.env.VITE_API_URL_BASE}/user/${userId}/boards`
+  )
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Tableros</SidebarGroupLabel>
       <SidebarMenu>
-        {!boards.length ? (
+        {!result || !result.length ? (
           <EmptyWorkspaceSidebar option="tablero" />
         ) : (
-          boards.map((item) => (
-            <SidebarMenuItem key={item.name}>
+          result.map((item) => (
+            <SidebarMenuItem key={item.id}>
               <SidebarMenuButton asChild>
-                <a href={item.url} title={item.name}>
-                  <span>{item.emoji}</span>
+                <a href={item.id} title={item.name}>
                   <span>{item.name}</span>
                 </a>
               </SidebarMenuButton>
